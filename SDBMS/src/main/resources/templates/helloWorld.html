@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Thymeleaf Demo</title>
+<!--        Create CSS folder in resources/static-->
+        <link th:href="@{/css/demo.css}" rel="stylesheet"/>
+<!--Remote css-->
+<!--        <link rel="stylesheet" href="" />-->
+    </head>
+    <body>
+        <p th:text="'Time on server is ' + ${theData}" class="funny"/>
+    </body>
+</html>
+

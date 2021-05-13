@@ -1,0 +1,44 @@
+"{\"userid\":\"alay\",\"streamid\":\"123\",\"streamName\":\"forex_alay_123\",\"dataSrc\":\"forex-data.csv\",\"dataFileSrc\":\"forex-data.csv\",\"queries\":[\"select * from forex_alay_123_data\",\"select * from forex_alay_123_data\",\"select * from forex_alay_123_data\"],\"dataAttributes\":[\"Item\",\"LastPrice\",\"LastDiffValue\",\"LastDiffPercentage\",\"DailyRangeLow\",\"DailyRangeHigh\",\"Bid\",\"Ask\"],\"requiredAttributes\":[\"Item\",\"LastPrice\",\"DailyRangeLow\",\"DailyRangeHigh\"],\"requiredAttributesDataType\":[\"VARCHAR(255)\",\"INT\",\"INT\",\"INT\"],\"tableNames\":[\"forex_data_table1\",\"forex_data_table2\",\"forex_data_table3\"],\"windowSize\":20,\"windowVelocity\":30,\"windowType\":\"Tumbling\", \"windowing\":\"Time\"}"
+
+
+"{\"userid\":\"alay\",\"streamid\":\"123\",\"streamName\":\"forex_alay_123\",\"dataSrc\":\"forex-data.csv\",\"dataFileSrc\":\"forex-data.csv\",\"queries\":[\"select * from forex_data_table1\",\"select * from forex_data_table2\",\"select * from forex_data_table3\"],\"dataAttributes\":[\"Item\",\"Last-Price\",\"Last-Diff-Value\",\"Last-Diff-Percentage\",\"Daily-Range-Low\",\"Daily-Range-High\",\"Bid\",\"Ask\"],\"requiredAttributes\":[\"Item\",\"LastPrice\",\"DailyRangeLow\",\"DailyRangeHigh\"],\"requiredAttributesDataType\":[\"VARCHAR(255)\",\"INT\",\"INT\",\"INT\"],\"tableNames\":[\"forex_data_table1\",\"forex_data_table2\",\"forex_data_table3\"],\"windowSize\":50,\"windowVelocity\":30,\"windowType\":\"Sliding\"}"
+
+
+"{\"userid\":\"alay\",\"streamid\":\"123\",\"streamName\":\"forex_alay_123\",\"dataSrc\":\"forex-data.csv\",\"dataFileSrc\":\"forex-data.csv\",\"queries\":[\"select * from forex_alay_123_data\",\"select * from forex_alay_123_data\",\"select * from forex_alay_123_data\"],\"dataAttributes\":[\"Item\",\"LastPrice\",\"LastDiffValue\",\"LastDiffPercentage\",\"DailyRangeLow\",\"DailyRangeHigh\",\"Bid\",\"Ask\"],\"requiredAttributes\":[\"Item\",\"LastPrice\",\"DailyRangeLow\",\"DailyRangeHigh\"],\"requiredAttributesDataType\":[\"VARCHAR(255)\",\"INT\",\"INT\",\"INT\"],\"tableNames\":[\"forex_data_table1\",\"forex_data_table2\",\"forex_data_table3\"],\"windowSize\":20,\"windowVelocity\":30,\"windowType\":\"Sliding\"}"
+
+"{\"tableNames\":[\"ad_17404_table1\",\"ad_17404_table2\"],\"windowing\":\"Tuple\",\"streamid\":\"17404\",\"userid\":\"ad\",\"streamName\":\"forex_trading\",\"queries\":[\"select * from forex_trading_data\",\"select count(*) from forex_trading_data\"],\"windowType\":\"Tumbling\",\"dataAttributes\":[\"Item\",\"LastPrice\",\"LastDiffValue\",\"LastDiffPercentage\",\"DailyRangeLow\",\"DailyRangeHigh\",\"Bid\",\"Ask\"],\"windowSize\":15,\"windowVelocity\":30,\"requiredAttributes\":[\"Item\",\"LastPrice\",\"DailyRangeLow\",\"DailyRangeHigh\"],\"requiredAttributesDataType\":[\"VARCHAR(255)\",\"INT\",\"INT\",\"INT\"],\"dataFileSrc\":\"forex-data.csv\",\"dataSrc\":\"forex-data.csv\"}"
+
+
+{
+    "tableNames": ["ad_26951_table1", "ad_26951_table2"],
+    "windowing": "Tuple",
+    "streamid": "26951",
+    "userid": "ad",
+    "streamName": "forex_trading",
+    "queries": ["select * from forex_trading_data", "select count(*) from forex_trading_data"],
+    "windowType": "Tumbling",
+    "dataAttributes": ["Item", "LastPrice", "LastDiffValue", "LastDiffPercentage", "DailyRangeLow", "DailyRangeHigh", "Bid", "c"],
+    "windowSize": 15,
+    "windowVelocity": 30,
+    "requiredAttributes": ["Item", "LastPrice", "DailyRangeLow", "DailyRangeHigh"],
+    "requiredAttributesDataType": ["VARCHAR(255)", "INT", "INT", "INT"],
+    "dataFileSrc": "forex-data.csv",
+    "dataSrc": "forex-data.csv"
+}
+
+
+{
+    "userid": "alay",
+    "streamid": "123",
+    "streamName": "forex_alay_123",
+    "dataSrc": "forex-data.csv",
+    "dataFileSrc": "forex-data.csv",
+    "queries": ["select * from forex_alay_123_data", "select * from forex_alay_123_data", "select * from forex_alay_123_data"],
+    "dataAttributes": ["Item", "LastPrice", "LastDiffValue", "LastDiffPercentage", "DailyRangeLow", "DailyRangeHigh", "Bid", "Ask"],
+    "requiredAttributes": ["Item", "LastPrice", "DailyRangeLow", "DailyRangeHigh"],
+    "requiredAttributesDataType": ["VARCHAR(255)", "INT", "INT", "INT"],
+    "tableNames": ["forex_data_table1", "forex_data_table2", "forex_data_table3"],
+    "windowSize": 20,
+    "windowVelocity": 30,
+    "windowType": "Tumbling"
+}

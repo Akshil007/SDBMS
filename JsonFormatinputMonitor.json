@@ -1,0 +1,31 @@
+{
+    "userid": "alay",
+    "streamid": "123",
+    "streamName": "forex_alay_123",
+    "dataSrc": "forex-data.csv",
+    "dataFileSrc": "forex-data.csv",
+    "queries": ["select * from forex_data_table1", "select * from forex_data_table2", "select * from forex_data_table3"],
+    "dataAttributes": ["Item", "Last-Price", "Last-Diff-Value", "Last-Diff-Percentage", "Daily-Range-Low", "Daily-Range-High", "Bid", "Ask"],
+    "requiredAttributes": ["Item", "LastPrice", "DailyRangeLow", "DailyRangeHigh"],
+    "requiredAttributesDataType": ["VARCHAR(255)", "INT", "INT", "INT"],
+    "tableNames": ["forex_data_table1", "forex_data_table2", "forex_data_table3"],
+    "windowSize": 50,
+    "windowVelocity": 15,
+    "windowType": "Tumbling"
+}
+
+{
+    "tableNames": ["ad_17064_table1", "ad_17064_table2"],
+    "streamid": "17064",
+    "userid": "ad",
+    "streamName": "asd",
+    "queries": ["Select * from table1", "select * from table2"],
+    "windowType": "Tumbling",
+    "dataAttributes": ["KOOM", "BOOM"],
+    "windowSize": "123",
+    "windowVelocity": "456",
+    "dataSrcFile": "zxc",
+    "requiredAttributes": ["KOOM"],
+    "requiredAttributesDataType": ["INT"],
+    "dataSrc": "qwe"
+}
