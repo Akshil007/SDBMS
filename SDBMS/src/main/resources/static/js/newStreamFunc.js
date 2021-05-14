@@ -996,22 +996,22 @@ btnSubmit.addEventListener('click', async function(event) {
 
         console.log(json_data);
 
-        //=============Remove this
-        json_data={
-            "stream_name": "forex_akshil",
-            "data_src": "forex-data.csv",
-            "data_file_src": "forex-data.csv",
-            "window_size": "20",
-            "window_type": "Tumbling",
-            "velocity": "5",
-            "windowing": "Tuple",
-            "elementsArray": ["Item", "LastPrice", "LastDiffValue", "LastDiffPercentage", "DailyRangeLow", "DailyRangeHigh", "Bid", "Ask"],
-            "queries": ["select count(*) from forex_akshil_data", "select avg(LastPrice) from forex_akshil_data"],
-            "elementsReqArray": ["Item", "LastPrice", "DailyRangeLow", "DailyRangeHigh"],
-            "dataTypeArray": ["VARCHAR(255)", "INT", "INT", "INT"],
-        };
-        console.log(json_data);
-        //====================
+        // //=============Remove this
+        // json_data={
+        //     "stream_name": "forex_akshil",
+        //     "data_src": "forex-data.csv",
+        //     "data_file_src": "forex-data.csv",
+        //     "window_size": "20",
+        //     "window_type": "Tumbling",
+        //     "velocity": "5",
+        //     "windowing": "Tuple",
+        //     "elementsArray": ["Item", "LastPrice", "LastDiffValue", "LastDiffPercentage", "DailyRangeLow", "DailyRangeHigh", "Bid", "Ask"],
+        //     "queries": ["select count(*) from forex_akshil_data", "select avg(LastPrice) from forex_akshil_data"],
+        //     "elementsReqArray": ["Item", "LastPrice", "DailyRangeLow", "DailyRangeHigh"],
+        //     "dataTypeArray": ["VARCHAR(255)", "INT", "INT", "INT"],
+        // };
+        // console.log(json_data);
+        // //====================
 
         axios
             .post('/newStreamDetails', {

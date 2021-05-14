@@ -7,4 +7,4 @@ mv ./src/main/resources/inputMonitor/$1/$1/inputMonitor_SDBMS.iml ./src/main/res
 mvn -f ./src/main/resources/inputMonitor/$1/$1/pom.xml clean install
 mv ./src/main/resources/inputMonitor/$1/$1/target/$1.jar ./src/main/resources/inputMonitor
 rm -rf ./src/main/resources/inputMonitor/$1
-nohup java -jar "./src/main/resources/inputMonitor/$1.jar" "$2" > /home/akshil/Desktop/error.txt &
+nohup java -jar "./src/main/resources/inputMonitor/$1.jar" "$2" &

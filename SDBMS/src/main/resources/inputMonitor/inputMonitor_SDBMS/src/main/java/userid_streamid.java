@@ -16,19 +16,20 @@ import java.util.Date;
 
 public class userid_streamid {
 
+    static int firstTime=1;
     public int deleteFromDB(String query) {
         return -1;
     }
 
     public static void main(String[] args) {
-        System.out.println("Arguements " + args[0]);
+        //System.out.println("Arguements " + args[0]);
         String un = "akshil";
         String pw = "akshil99";
         try {
             //remove this comment before final demo
             JSONObject parameters = new JSONObject(args[0]);
 
-            //JSONObject parameters = new JSONObject("{\"tableNames\":[\"ak_26784_table1\",\"ak_26784_table2\"],\"windowing\":\"Tuple\",\"streamid\":\"26784\",\"userid\":\"ak\",\"streamName\":\"forex_akshil\",\"queries\":[\"select count(*) from forex_akshil_data\",\"select avg(LastPrice) from forex_akshil_data\"],\"windowType\":\"Tumbling\",\"dataAttributes\":[\"Item\",\"LastPrice\",\"LastDiffValue\",\"LastDiffPercentage\",\"DailyRangeLow\",\"DailyRangeHigh\",\"Bid\",\"Ask\"],\"windowSize\":20,\"windowVelocity\":5,\"requiredAttributes\":[\"Item\",\"LastPrice\",\"DailyRangeLow\",\"DailyRangeHigh\"],\"requiredAttributesDataType\":[\"VARCHAR(255)\",\"INT\",\"INT\",\"INT\"],\"dataFileSrc\":\"forex-data.csv\",\"dataSrc\":\"forex-data.csv\"}");
+            //JSONObject parameters = new JSONObject("{\"tableNames\":[\"ak_26784_table1\",\"ak_26784_table2\"],\"windowing\":\"Tuple\",\"streamid\":\"26784\",\"userid\":\"ak\",\"streamName\":\"forex_akshil\",\"queries\":[\"select count(*) from forex_akshil_data\",\"select avg(LastPrice) from forex_akshil_data\"],\"windowType\":\"Sliding\",\"dataAttributes\":[\"Item\",\"LastPrice\",\"LastDiffValue\",\"LastDiffPercentage\",\"DailyRangeLow\",\"DailyRangeHigh\",\"Bid\",\"Ask\"],\"windowSize\":7,\"windowVelocity\":3,\"requiredAttributes\":[\"Item\",\"LastPrice\",\"DailyRangeLow\",\"DailyRangeHigh\"],\"requiredAttributesDataType\":[\"VARCHAR(255)\",\"INT\",\"INT\",\"INT\"],\"dataFileSrc\":\"forex-data.csv\",\"dataSrc\":\"forex-data.csv\"}");
             // ...
             // ...
             JSONArray tableNames = parameters.getJSONArray("tableNames");
@@ -82,6 +83,13 @@ public class userid_streamid {
                         un, pw);
                 Statement stmt = con.createStatement();
 
+//                //==============================REMOVE======
+//                String dropQuery="DROP TABLE "+ dataTableName;
+//                stmt.executeUpdate(dropQuery);
+//
+//                //================================
+
+
                 String sqlQuery = "CREATE TABLE " + dataTableName + " ( ";
                 for (int k = 0; k < reqAttrs.length(); k++) {
                     sqlQuery += reqAttrs.getString(k) + " " + reqAttrsDatType.getString(k) + ",";
@@ -100,7 +108,10 @@ public class userid_streamid {
             }
 
             CSVParser csvParser = new CSVParserBuilder().withSeparator(',').build();
+
             while (true) {
+
+
 
                 if (windowType.equals("Tumbling")) {
                     //try to find out how to get csv headers (columns) name here?
@@ -200,7 +211,7 @@ public class userid_streamid {
 
                             Statement stmt = con.createStatement();
 
-                            int firstTime=1;
+
                             if (i != 0) {
                                 for (int k = 0; k < tableNames.length(); k++) {
 
@@ -210,23 +221,36 @@ public class userid_streamid {
 //                                    } catch (Exception e) {
 //                                        System.out.println("Unable to drop " + e);
 //                                    }
+                                    System.out.println(firstTime);
                                     if(firstTime==1) {
+
+//                                        //this should remove
+//                                        //===================
+//                                        try {
+//                                            String dropSql = "drop table " + tableNames.getString(k);
+//                                            System.out.println(dropSql);
+//                                            stmt.executeUpdate(dropSql);
+//                                        } catch (Exception e) {
+//                                            System.out.println("Unable to drop " + e);
+//                                        }
+//                                        //======================
                                         try {
                                             String createSql = "CREATE TABLE " + tableNames.getString(k) + " AS "
                                                     + queries.getString(k);
                                             System.out.println(createSql);
                                             stmt.executeUpdate(createSql);
-                                            firstTime=0;
+
                                         } catch (Exception e) {
                                             System.out.println("Unable to create and insert " + e);
                                         }
+
                                     }
                                     else
                                     {
                                         try {
                                             String insertSql = "INSERT INTO " + tableNames.getString(k) +" "
                                                     + queries.getString(k);
-                                            System.out.println(insertSql);
+                                            System.out.println("insertsql ========== >"+insertSql);
                                             stmt.executeUpdate(insertSql);
                                         } catch (Exception e) {
                                             System.out.println("Unable to create and insert " + e);
@@ -234,8 +258,8 @@ public class userid_streamid {
                                     }
 
                                 }
-                            }
 
+                            }
                             con.close();
 
                             System.out.println("======================");
@@ -277,6 +301,7 @@ public class userid_streamid {
                                 insertTuple += " ) values  (" + valuesToInsert + " )";
 
                                 try {
+                                    System.out.println("value to insert"+valuesToInsert);
                                     stmt.executeUpdate(insertTuple);
                                 } catch (Exception e) {
                                     System.out.println("Error insert into data table at row TIME BASED " + lastTimeCount
@@ -291,7 +316,7 @@ public class userid_streamid {
 
                             String deleteOldDataTime = "DELETE FROM " + dataTableName
                                     + " WHERE STR_TO_DATE(insertTime, '%Y-%m-%d %H:%i:%s') < DATE_SUB('" + prevTime
-                                    + "', INTERVAL " + windowSize + " MINUTE)";
+                                    + "', INTERVAL " + windowSize + " MINUTE )";
                             try {
                                 stmt.executeUpdate(deleteOldDataTime);
                             } catch (Exception e) {
@@ -313,20 +338,55 @@ public class userid_streamid {
                                 // insert new data of windowSize;
                                 for (int k = 0; k < tableNames.length(); k++) {
 
-                                    try {
-                                        String dropSql = "drop table " + tableNames.getString(k);
-                                        stmt.executeUpdate(dropSql);
-                                    } catch (Exception e) {
-                                        System.out.println("Unable to drop " + e);
+//                                    try {
+//                                        String dropSql = "drop table " + tableNames.getString(k);
+//                                        stmt.executeUpdate(dropSql);
+//                                    } catch (Exception e) {
+//                                        System.out.println("Unable to drop " + e);
+//                                    }
+//                                    try {
+//                                        String createSql = "CREATE TABLE " + tableNames.getString(k) + " AS "
+//                                                + queries.getString(k) + " WHERE insertTime BETWEEN '" + prevTime
+//                                                + "' and '" + nextTime + "'";
+//                                        System.out.println(createSql);
+//                                        stmt.executeUpdate(createSql);
+//                                    } catch (Exception e) {
+//                                        System.out.println("Unable to create and insert " + e);
+//                                    }
+                                    if(firstTime==1) {
+
+//                                        //this should remove
+//                                        //===================
+//                                        try {
+//                                            String dropSql = "drop table " + tableNames.getString(k);
+//                                            stmt.executeUpdate(dropSql);
+//                                        } catch (Exception e) {
+//                                            System.out.println("Unable to drop " + e);
+//                                        }
+//                                        //======================
+                                        try {
+                                            String createSql = "CREATE TABLE " + tableNames.getString(k) + " AS "
+                                                    + queries.getString(k) + " WHERE insertTime BETWEEN '" + prevTime
+                                                    + "' and '" + nextTime + "'";
+                                            System.out.println(createSql);
+                                            stmt.executeUpdate(createSql);
+
+                                        } catch (Exception e) {
+                                            System.out.println("Unable to create and insert " + e);
+                                        }
+
                                     }
-                                    try {
-                                        String createSql = "CREATE TABLE " + tableNames.getString(k) + " AS "
-                                                + queries.getString(k) + " WHERE insertTime BETWEEN '" + prevTime
-                                                + "' and '" + nextTime + "'";
-                                        System.out.println(createSql);
-                                        stmt.executeUpdate(createSql);
-                                    } catch (Exception e) {
-                                        System.out.println("Unable to create and insert " + e);
+                                    else
+                                    {
+                                        try {
+                                            String insertSql = "INSERT INTO " + tableNames.getString(k) +" "
+                                                    + queries.getString(k) + " WHERE insertTime BETWEEN '" + prevTime
+                                                    + "' and '" + nextTime + "'";
+                                            System.out.println("insertsql ========== >"+insertSql);
+                                            stmt.executeUpdate(insertSql);
+                                        } catch (Exception e) {
+                                            System.out.println("Unable to create and insert " + e);
+                                        }
                                     }
                                 }
                                 prevTime = nextTime;
@@ -337,7 +397,7 @@ public class userid_streamid {
 
                         }
 
-                        System.out.println(lastCount);
+                        System.out.println("lastcount:"+lastCount);
 
                         long stopTime = System.currentTimeMillis();
 
@@ -351,32 +411,39 @@ public class userid_streamid {
 
                 } else if (windowType.equals("Sliding")) {
                     try (CSVReader reader = new CSVReaderBuilder(new FileReader("/home/akshil/IIITB/sem-2/DM/Project/Stream-data-model/" + dataFileSrc))
-                            .withCSVParser(csvParser).build()) {
-                        long startTime = System.currentTimeMillis();
-                        List<String[]> allData = reader.readAll();
+                            .withCSVParser(csvParser)
+                            .withSkipLines(lastCount).build()) {
+                        System.out.println("Sliding");
 
+                        long startTime = System.currentTimeMillis();
+
+                        // Inserting data into database;
                         Class.forName("com.mysql.cj.jdbc.Driver");
                         Connection con = DriverManager.getConnection(
                                 "jdbc:mysql://localhost:3306/sdbms?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
                                 un, pw);
-
-                        for (int i = Math.max(0, (int) allData.size() - (int) windowSize); i < allData.size(); i++) {
-                            for (String attribute : allData.get(i)) {
-                                System.out.print(attribute + " ");
-                            }
+                        int i;
+                        for (i = 0; i < windowSize; i++) {
                             Connection con1 = DriverManager.getConnection(
                                     "jdbc:mysql://localhost:3306/sdbms?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
                                     un, pw);
 
+                            String[] tuple = reader.readNext();
+                            if (tuple == null)
+                                break;
+
+                            for (String attribute : tuple) {
+                                System.out.print(attribute + " ");
+                            }
                             String valuesToInsert = "";
                             int currReqIndex = 0;
                             System.out.println();
 
-                            for (int j = 0; j < allData.get(i).length
-                                    && currReqIndex < attrNumberOfRequired.length; j++) {
+                            //making insert query
+                            for (int j = 0; j < tuple.length && currReqIndex < attrNumberOfRequired.length; j++) {
                                 if (j == attrNumberOfRequired[currReqIndex]) {
 
-                                    valuesToInsert += "\"" + allData.get(i)[j] + "\"";
+                                    valuesToInsert += "\"" + tuple[j] + "\"";
                                     if (currReqIndex != attrNumberOfRequired.length - 1) {
                                         valuesToInsert += ",";
                                     }
@@ -412,9 +479,10 @@ public class userid_streamid {
 
                             con1.close();
 
-                            System.out.println();
                         }
 
+//                            // Delete old data from table;
+//
                         Statement countData = con.createStatement();
                         String queryCount = "select count(*) from " + dataTableName;
                         ResultSet rsQueryCount = countData.executeQuery(queryCount);
@@ -432,41 +500,389 @@ public class userid_streamid {
                             }
                         }
 
+                        // Query processing
+
                         Statement stmt = con.createStatement();
 
-                        for (int k = 0; k < tableNames.length(); k++) {
 
-                            try {
-                                String dropSql = "drop table " + tableNames.getString(k);
-                                stmt.executeUpdate(dropSql);
-                            } catch (Exception e) {
-                                System.out.println("Unable to drop " + e);
+                        if (i != 0) {
+                            for (int k = 0; k < tableNames.length(); k++) {
+                                if(firstTime==1) {
+
+//                                    //this should remove
+//                                    //===================
+//                                    try {
+//                                        String dropSql = "drop table " + tableNames.getString(k);
+//                                        System.out.println(dropSql);
+//                                        stmt.executeUpdate(dropSql);
+//                                    } catch (Exception e) {
+//                                        System.out.println("Unable to drop " + e);
+//                                    }
+//                                    //======================
+                                    try {
+                                        String createSql = "CREATE TABLE " + tableNames.getString(k) + " AS "
+                                                + queries.getString(k);
+                                        System.out.println(createSql);
+                                        stmt.executeUpdate(createSql);
+
+                                    } catch (Exception e) {
+                                        System.out.println("Unable to create and insert " + e);
+                                    }
+
+                                }
+                                else
+                                {
+                                    try {
+                                        String insertSql = "INSERT INTO " + tableNames.getString(k) +" "
+                                                + queries.getString(k);
+                                        System.out.println("insertsql ========== >"+insertSql);
+                                        stmt.executeUpdate(insertSql);
+                                    } catch (Exception e) {
+                                        System.out.println("Unable to create and insert " + e);
+                                    }
+                                }
+
                             }
-                            try {
-                                String createSql = "CREATE TABLE " + tableNames.getString(k) + " AS "
-                                        + queries.getString(k);
-                                System.out.println(createSql);
-                                stmt.executeUpdate(createSql);
-                            } catch (Exception e) {
-                                System.out.println("Unable to create and insert " + e);
-                            }
+
                         }
-
                         con.close();
 
-                        System.out.println("=========================");
+                        System.out.println("======================");
+                        lastCount++;
+
+
+
+                        System.out.println("lastcount:"+lastCount);
 
                         long stopTime = System.currentTimeMillis();
 
-                        if ((stopTime - startTime) <= windowVelocity * 1000) {
+                        if ((stopTime - startTime) <= windowVelocity * 1000 && windowing.equals("Tuple")) {
                             Thread.sleep(windowVelocity * 1000 - (stopTime - startTime));
                         }
 
                     } catch (Exception e) {
-                        System.out.println("Sliding exception " + e);
+                        System.out.println("Error in sliding" + e);
+                    }
+//                    try (CSVReader reader = new CSVReaderBuilder(new FileReader("/home/akshil/IIITB/sem-2/DM/Project/Stream-data-model/" + dataFileSrc))
+//                            .withCSVParser(csvParser).build()) {
+//                        long startTime = System.currentTimeMillis();
+//                        List<String[]> allData = reader.readAll();
+//
+//                        System.out.println("size:"+allData.size());
+//
+//                        Class.forName("com.mysql.cj.jdbc.Driver");
+//                        Connection con = DriverManager.getConnection(
+//                                "jdbc:mysql://localhost:3306/sdbms?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+//                                un, pw);
+//
+//                        for (int i = Math.max(0, (int) allData.size() - (int) windowSize); i < allData.size(); i++) {
+//                            for (String attribute : allData.get(i)) {
+//                                System.out.print(attribute + " ");
+//                            }
+//                            Connection con1 = DriverManager.getConnection(
+//                                    "jdbc:mysql://localhost:3306/sdbms?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+//                                    un, pw);
+//
+//                            String valuesToInsert = "";
+//                            int currReqIndex = 0;
+//                            System.out.println();
+//
+//                            for (int j = 0; j < allData.get(i).length
+//                                    && currReqIndex < attrNumberOfRequired.length; j++) {
+//                                if (j == attrNumberOfRequired[currReqIndex]) {
+//
+//                                    valuesToInsert += "\"" + allData.get(i)[j] + "\"";
+//                                    if (currReqIndex != attrNumberOfRequired.length - 1) {
+//                                        valuesToInsert += ",";
+//                                    }
+//                                    currReqIndex++;
+//                                }
+//                            }
+//
+//                            System.out.println("valuesToInsert" + valuesToInsert);
+//
+//                            System.out.println();
+//
+//                            // Insert the tuples in database;
+//                            Statement stmt = con1.createStatement();
+//
+//                            String insertTuple = "INSERT INTO " + dataTableName + "(";
+//
+//                            for (int itq = 0; itq < reqAttrs.length(); itq++) {
+//                                insertTuple += reqAttrs.getString(itq);
+//                                if (itq != reqAttrs.length() - 1) {
+//                                    insertTuple += ",";
+//                                }
+//                            }
+//
+//                            insertTuple += " ) values  (" + valuesToInsert + " )";
+//
+//                            System.out.println(insertTuple);
+//
+//                            try {
+//                                stmt.executeUpdate(insertTuple);
+//                            } catch (Exception e) {
+//                                System.out.println("Error insert into data table at row " + i + " error " + e);
+//                            }
+//
+//                            con1.close();
+//
+//                            System.out.println();
+//                        }
+//
+//                        Statement countData = con.createStatement();
+//                        String queryCount = "select count(*) from " + dataTableName;
+//                        ResultSet rsQueryCount = countData.executeQuery(queryCount);
+//                        rsQueryCount.next();
+//
+//                        int haha = rsQueryCount.getInt("count(*)");
+//                        if (haha > windowSize) {
+//                            String deleteQuery = "DELETE FROM " + dataTableName + " ORDER BY insertTime LIMIT "
+//                                    + String.valueOf(haha - windowSize);
+//                            Statement deleteStmt = con.createStatement();
+//                            try {
+//                                deleteStmt.executeUpdate(deleteQuery);
+//                            } catch (Exception e) {
+//                                System.out.println("ERRROR deleting records " + e);
+//                            }
+//                        }
+//
+//                        Statement stmt = con.createStatement();
+//
+//                        for (int k = 0; k < tableNames.length(); k++) {
+//
+////                            try {
+////                                String dropSql = "drop table " + tableNames.getString(k);
+////                                stmt.executeUpdate(dropSql);
+////                            } catch (Exception e) {
+////                                System.out.println("Unable to drop " + e);
+////                            }
+////                            try {
+////                                String createSql = "CREATE TABLE " + tableNames.getString(k) + " AS "
+////                                        + queries.getString(k);
+////                                System.out.println(createSql);
+////                                stmt.executeUpdate(createSql);
+////                            } catch (Exception e) {
+////                                System.out.println("Unable to create and insert " + e);
+////                            }
+//                            if(firstTime==1) {
+//
+//                                //this should remove
+//                                //===================
+//                                try {
+//                                    String dropSql = "drop table " + tableNames.getString(k);
+//                                    System.out.println(dropSql);
+//                                    stmt.executeUpdate(dropSql);
+//                                } catch (Exception e) {
+//                                    System.out.println("Unable to drop " + e);
+//                                }
+//                                //======================
+//                                try {
+//                                    String createSql = "CREATE TABLE " + tableNames.getString(k) + " AS "
+//                                            + queries.getString(k);
+//                                    System.out.println(createSql);
+//                                    stmt.executeUpdate(createSql);
+//
+//                                } catch (Exception e) {
+//                                    System.out.println("Unable to create and insert " + e);
+//                                }
+//
+//                            }
+//                            else
+//                            {
+//                                try {
+//                                    String insertSql = "INSERT INTO " + tableNames.getString(k) +" "
+//                                            + queries.getString(k);
+//                                    System.out.println("insertsql ========== >"+insertSql);
+//                                    stmt.executeUpdate(insertSql);
+//                                } catch (Exception e) {
+//                                    System.out.println("Unable to create and insert " + e);
+//                                }
+//                            }
+//                        }
+//
+//                        con.close();
+//
+//                        System.out.println("=========================");
+//
+//                        long stopTime = System.currentTimeMillis();
+//
+//                        if ((stopTime - startTime) <= windowVelocity * 1000) {
+//                            System.out.println("Sleep for:"+(windowVelocity * 1000 - (stopTime - startTime))+"sec" );
+//                            Thread.sleep(windowVelocity * 1000 - (stopTime - startTime));
+//                        }
+//
+//                    } catch (Exception e) {
+//                        System.out.println("Sliding exception " + e);
+//                    }
+                }
+                else if(windowType.equals("LandMark"))
+                {
+                    try (CSVReader reader = new CSVReaderBuilder(new FileReader("/home/akshil/IIITB/sem-2/DM/Project/Stream-data-model/" + dataFileSrc))
+                            .withCSVParser(csvParser)
+                            .withSkipLines(windowing.equals("Tuple") ? lastCount : lastTimeCount).build()) {
+                        System.out.println("LandMark");
+
+                        long startTime = System.currentTimeMillis();
+
+
+                        // Inserting data into database;
+                        Class.forName("com.mysql.cj.jdbc.Driver");
+                        Connection con = DriverManager.getConnection(
+                                "jdbc:mysql://localhost:3306/sdbms?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+                                un, pw);
+                        int i;
+                        for (i = 0; i < windowSize; i++) {
+                            Connection con1 = DriverManager.getConnection(
+                                    "jdbc:mysql://localhost:3306/sdbms?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+                                    un, pw);
+
+                            String[] tuple = reader.readNext();
+                            if (tuple == null)
+                                break;
+
+                            for (String attribute : tuple) {
+                                System.out.print(attribute + " ");
+                            }
+                            String valuesToInsert = "";
+                            int currReqIndex = 0;
+                            System.out.println();
+
+                            //making insert query
+                            for (int j = 0; j < tuple.length && currReqIndex < attrNumberOfRequired.length; j++) {
+                                if (j == attrNumberOfRequired[currReqIndex]) {
+
+                                    valuesToInsert += "\"" + tuple[j] + "\"";
+                                    if (currReqIndex != attrNumberOfRequired.length - 1) {
+                                        valuesToInsert += ",";
+                                    }
+                                    currReqIndex++;
+                                }
+                            }
+
+                            System.out.println("valuesToInsert" + valuesToInsert);
+
+                            System.out.println();
+
+                            // Insert the tuples in database;
+                            Statement stmt = con1.createStatement();
+
+                            String insertTuple = "INSERT INTO " + dataTableName + "(";
+
+                            for (int itq = 0; itq < reqAttrs.length(); itq++) {
+                                insertTuple += reqAttrs.getString(itq);
+                                if (itq != reqAttrs.length() - 1) {
+                                    insertTuple += ",";
+                                }
+                            }
+
+                            insertTuple += " ) values  (" + valuesToInsert + " )";
+
+                            System.out.println(insertTuple);
+
+                            try {
+                                stmt.executeUpdate(insertTuple);
+                            } catch (Exception e) {
+                                System.out.println("Error insert into data table at row " + i + " error " + e);
+                            }
+
+                            con1.close();
+
+                        }
+
+//                            // Delete old data from table;
+//
+//                            Statement countData = con.createStatement();
+//                            String queryCount = "select count(*) from " + dataTableName;
+//                            ResultSet rsQueryCount = countData.executeQuery(queryCount);
+//                            rsQueryCount.next();
+//
+//                            int haha = rsQueryCount.getInt("count(*)");
+//                            if (haha > windowSize) {
+//                                String deleteQuery = "DELETE FROM " + dataTableName + " ORDER BY insertTime LIMIT "
+//                                        + String.valueOf(haha - windowSize);
+//                                Statement deleteStmt = con.createStatement();
+//                                try {
+//                                    deleteStmt.executeUpdate(deleteQuery);
+//                                } catch (Exception e) {
+//                                    System.out.println("ERRROR deleting records " + e);
+//                                }
+//                            }
+
+                        // Query processing
+
+                        Statement stmt = con.createStatement();
+
+
+                        if (i != 0) {
+                            for (int k = 0; k < tableNames.length(); k++) {
+
+//                                    try {
+//                                        String dropSql = "drop table " + tableNames.getString(k);
+//                                        stmt.executeUpdate(dropSql);
+//                                    } catch (Exception e) {
+//                                        System.out.println("Unable to drop " + e);
+//                                    }
+                                System.out.println(firstTime);
+                                if(firstTime==1) {
+
+//                                    //this should remove
+//                                    //===================
+//                                    try {
+//                                        String dropSql = "drop table " + tableNames.getString(k);
+//                                        System.out.println(dropSql);
+//                                        stmt.executeUpdate(dropSql);
+//                                    } catch (Exception e) {
+//                                        System.out.println("Unable to drop " + e);
+//                                    }
+//                                    //======================
+                                    try {
+                                        String createSql = "CREATE TABLE " + tableNames.getString(k) + " AS "
+                                                + queries.getString(k);
+                                        System.out.println(createSql);
+                                        stmt.executeUpdate(createSql);
+
+                                    } catch (Exception e) {
+                                        System.out.println("Unable to create and insert " + e);
+                                    }
+
+                                }
+                                else
+                                {
+                                    try {
+                                        String insertSql = "INSERT INTO " + tableNames.getString(k) +" "
+                                                + queries.getString(k);
+                                        System.out.println("insertsql ========== >"+insertSql);
+                                        stmt.executeUpdate(insertSql);
+                                    } catch (Exception e) {
+                                        System.out.println("Unable to create and insert " + e);
+                                    }
+                                }
+
+                            }
+
+                        }
+                        con.close();
+
+                        System.out.println("======================");
+                        lastCount += i;
+
+
+
+                        System.out.println("lastcount:"+lastCount);
+
+                        long stopTime = System.currentTimeMillis();
+
+                        if ((stopTime - startTime) <= windowVelocity * 1000 && windowing.equals("Tuple")) {
+                            Thread.sleep(windowVelocity * 1000 - (stopTime - startTime));
+                        }
+
+                    } catch (Exception e) {
+                        System.out.println("Error in while(true) " + e);
                     }
                 }
 
+                firstTime=0;
             }
 
         } catch (Exception e) {
