@@ -25,7 +25,10 @@ public class userid_streamid {
         String un = "akshil";
         String pw = "akshil99";
         try {
+            //remove this comment before final demo
             JSONObject parameters = new JSONObject(args[0]);
+
+            //JSONObject parameters = new JSONObject("{\"tableNames\":[\"ak_26784_table1\",\"ak_26784_table2\"],\"windowing\":\"Tuple\",\"streamid\":\"26784\",\"userid\":\"ak\",\"streamName\":\"forex_akshil\",\"queries\":[\"select count(*) from forex_akshil_data\",\"select avg(LastPrice) from forex_akshil_data\"],\"windowType\":\"Tumbling\",\"dataAttributes\":[\"Item\",\"LastPrice\",\"LastDiffValue\",\"LastDiffPercentage\",\"DailyRangeLow\",\"DailyRangeHigh\",\"Bid\",\"Ask\"],\"windowSize\":20,\"windowVelocity\":5,\"requiredAttributes\":[\"Item\",\"LastPrice\",\"DailyRangeLow\",\"DailyRangeHigh\"],\"requiredAttributesDataType\":[\"VARCHAR(255)\",\"INT\",\"INT\",\"INT\"],\"dataFileSrc\":\"forex-data.csv\",\"dataSrc\":\"forex-data.csv\"}");
             // ...
             // ...
             JSONArray tableNames = parameters.getJSONArray("tableNames");
@@ -43,6 +46,11 @@ public class userid_streamid {
             String dataFileSrc = parameters.getString("dataFileSrc");
             String dataTableName = parameters.getString("streamName") + "_data";
             String windowing = parameters.getString("windowing");
+
+
+
+
+
 
             // ...Last record read
             int lastCount = 0;
@@ -192,23 +200,39 @@ public class userid_streamid {
 
                             Statement stmt = con.createStatement();
 
+                            int firstTime=1;
                             if (i != 0) {
                                 for (int k = 0; k < tableNames.length(); k++) {
 
-                                    try {
-                                        String dropSql = "drop table " + tableNames.getString(k);
-                                        stmt.executeUpdate(dropSql);
-                                    } catch (Exception e) {
-                                        System.out.println("Unable to drop " + e);
+//                                    try {
+//                                        String dropSql = "drop table " + tableNames.getString(k);
+//                                        stmt.executeUpdate(dropSql);
+//                                    } catch (Exception e) {
+//                                        System.out.println("Unable to drop " + e);
+//                                    }
+                                    if(firstTime==1) {
+                                        try {
+                                            String createSql = "CREATE TABLE " + tableNames.getString(k) + " AS "
+                                                    + queries.getString(k);
+                                            System.out.println(createSql);
+                                            stmt.executeUpdate(createSql);
+                                            firstTime=0;
+                                        } catch (Exception e) {
+                                            System.out.println("Unable to create and insert " + e);
+                                        }
                                     }
-                                    try {
-                                        String createSql = "CREATE TABLE " + tableNames.getString(k) + " AS "
-                                                + queries.getString(k);
-                                        System.out.println(createSql);
-                                        stmt.executeUpdate(createSql);
-                                    } catch (Exception e) {
-                                        System.out.println("Unable to create and insert " + e);
+                                    else
+                                    {
+                                        try {
+                                            String insertSql = "INSERT INTO " + tableNames.getString(k) +" "
+                                                    + queries.getString(k);
+                                            System.out.println(insertSql);
+                                            stmt.executeUpdate(insertSql);
+                                        } catch (Exception e) {
+                                            System.out.println("Unable to create and insert " + e);
+                                        }
                                     }
+
                                 }
                             }
 

@@ -706,15 +706,15 @@ let btnAddQuery = document.getElementById('btn-add-query');
 let attributeParentDiv = document.getElementById('attributes-parent-div');
 let queryParentDiv = document.getElementById('queries-parent-div');
 let numAttributeElements = 1;
-let numAttrReqElements = 0;
+//let numAttrReqElements = 0;
 let numQueryElements = 0;
 let elementsArray = [];
 
-let numDataTypes = 1;
-let attrDataTypeParentDiv = document.getElementById('data-type-parent-div');
+//let numDataTypes = 1;
+//let attrDataTypeParentDiv = document.getElementById('data-type-parent-div');
 
-let btnAddAttrReq = document.getElementById('btn-add-attr-req');
-let attrReqParentDiv = document.getElementById('attr-req-parent-div');
+//let btnAddAttrReq = document.getElementById('btn-add-attr-req');
+//let attrReqParentDiv = document.getElementById('attr-req-parent-div');
 
 
 function getQueryElement(){
@@ -771,21 +771,50 @@ function getAttributeElement() {
     row.style.marginBottom = '0.15rem';
 
     let col1 = document.createElement('div');
-    col1.setAttribute('class', 'col-md-9');
-    col1.classList.add('py-3');
+    col1.setAttribute('class', 'col-md-1');
+    col1.classList.add('text-center', 'py-3');
 
     let col2 = document.createElement('div');
-    col2.setAttribute('class', 'col-md-3');
+    col2.setAttribute('class', 'col-md-6');
     col2.classList.add('text-center', 'py-3');
+
+    let col3 = document.createElement('div');
+    col3.setAttribute('class', 'col-md-3');
+    col3.classList.add('text-center', 'py-3');
+
+    let col4 = document.createElement('div');
+    col4.setAttribute('class', 'col-md-2');
+    col4.classList.add('text-center', 'py-3');
+
+    let checkbox = document.createElement('input');
+    checkbox.setAttribute('type','checkbox');
+    checkbox.setAttribute('id','Check-Id-'+ numAttributeElements);
+    checkbox.setAttribute('name','Check-' + numAttributeElements);
+    col1.appendChild(checkbox);
+
 
     let inputText = document.createElement('input');
     inputText.setAttribute('type', 'text');
     inputText.setAttribute('id', 'Name-Id-' + numAttributeElements);
     inputText.setAttribute('name', 'Name-' + numAttributeElements);
     inputText.setAttribute('placeholder', 'Element Name ...');
-    inputText.style.width = '45%';
+    inputText.style.width = '50%';
+    col2.appendChild(inputText);
 
-    col1.appendChild(inputText);
+
+    let select = document.createElement("select");
+    select.setAttribute('id','Select-Id-' + numAttributeElements);
+    select.setAttribute('name','Select-' + numAttributeElements);
+    let datatypes = ["VARCHAR(255)","INT","FLOAT","DOUBLE"] ;
+    for (const val of datatypes)
+    {
+        let option = document.createElement("option");
+        option.value = val;
+        option.text = val;
+        select.appendChild(option);
+    }
+    col3.appendChild(select);
+
 
     let removeButton = document.createElement('button');
     removeButton.setAttribute('id', 'btnattr-' + numAttributeElements);
@@ -795,90 +824,92 @@ function getAttributeElement() {
         let childId = mouseEvent.target.id.split("-")[1];
         attributeParentDiv.removeChild(document.getElementById('row-attr-' + childId));
     });
-    col2.appendChild(removeButton);
+    col4.appendChild(removeButton);
 
     row.appendChild(col1);
     row.appendChild(col2);
+    row.appendChild(col3);
+    row.appendChild(col4);
 
     return row;
 }
 
-function getDataTypeElement() {
+// function getDataTypeElement() {
+//
+//     let row = document.createElement('div');
+//     row.classList.add('row');
+//     row.setAttribute('id', 'row-data-type-' + numDataTypes);
+//     row.style.backgroundColor = '#a2a2a259';
+//     row.style.borderRadius = '4px';
+//     row.style.borderBottom = '1px';
+//     row.style.borderBottomColor = 'black';
+//     row.style.marginBottom = '0.15rem';
+//
+//     let col1 = document.createElement('div');
+//     col1.setAttribute('class', 'col-md-9');
+//     col1.classList.add('py-3');
+//
+//     let col2 = document.createElement('div');
+//     col2.setAttribute('class', 'col-md-3');
+//     col2.classList.add('text-center', 'py-3');
+//
+//     let inputText = document.createElement('input');
+//     inputText.setAttribute('type', 'text');
+//     inputText.setAttribute('id', 'Name-Id-' + numDataTypes);
+//     inputText.setAttribute('name', 'Name-' + numDataTypes);
+//     inputText.setAttribute('placeholder', 'Data Type ...');
+//     inputText.style.width = '45%';
+//
+//     col1.appendChild(inputText);
+//     row.appendChild(col1);
+//
+//     return row;
+//
+// }
 
-    let row = document.createElement('div');
-    row.classList.add('row');
-    row.setAttribute('id', 'row-data-type-' + numDataTypes);
-    row.style.backgroundColor = '#a2a2a259';
-    row.style.borderRadius = '4px';
-    row.style.borderBottom = '1px';
-    row.style.borderBottomColor = 'black';
-    row.style.marginBottom = '0.15rem';
-
-    let col1 = document.createElement('div');
-    col1.setAttribute('class', 'col-md-9');
-    col1.classList.add('py-3');
-
-    let col2 = document.createElement('div');
-    col2.setAttribute('class', 'col-md-3');
-    col2.classList.add('text-center', 'py-3');
-
-    let inputText = document.createElement('input');
-    inputText.setAttribute('type', 'text');
-    inputText.setAttribute('id', 'Name-Id-' + numDataTypes);
-    inputText.setAttribute('name', 'Name-' + numDataTypes);
-    inputText.setAttribute('placeholder', 'Data Type ...');
-    inputText.style.width = '45%';
-
-    col1.appendChild(inputText);
-    row.appendChild(col1);
-
-    return row;
-
-}
-
-function getAttrReqElement() {
-    let row = document.createElement('div');
-    row.classList.add('row');
-    row.setAttribute('id', 'row-attr-req-' + numAttrReqElements);
-    row.style.backgroundColor = '#a2a2a259';
-    row.style.borderRadius = '4px';
-    row.style.borderBottom = '1px';
-    row.style.borderBottomColor = 'black';
-    row.style.marginBottom = '0.15rem';
-
-    let col1 = document.createElement('div');
-    col1.setAttribute('class', 'col-md-9');
-    col1.classList.add('py-3');
-
-    let col2 = document.createElement('div');
-    col2.setAttribute('class', 'col-md-3');
-    col2.classList.add('text-center', 'py-3');
-
-    let inputText = document.createElement('input');
-    inputText.setAttribute('type', 'text');
-    inputText.setAttribute('id', 'Name-Id-' + numAttrReqElements);
-    inputText.setAttribute('name', 'Name-' + numAttrReqElements);
-    inputText.setAttribute('placeholder', 'Element Name ...');
-    inputText.style.width = '45%';
-
-    col1.appendChild(inputText);
-
-    let removeButton = document.createElement('button');
-    removeButton.setAttribute('id', 'btnattrReq-' + numAttrReqElements);
-    // removeButton.classList.add('btn', 'btn-default', 'btn-sm');
-    removeButton.innerHTML='<span class="glyphicon glyphicon-remove"></span> Remove';
-    removeButton.addEventListener('click', async (mouseEvent) => {
-        let childId = mouseEvent.target.id.split("-")[1];
-        attrReqParentDiv.removeChild(document.getElementById('row-attr-req-' + childId));
-        attrDataTypeParentDiv.removeChild(document.getElementById('row-data-type-' + childId));
-    });
-    col2.appendChild(removeButton);
-
-    row.appendChild(col1);
-    row.appendChild(col2);
-
-    return row;
-}
+// function getAttrReqElement() {
+//     let row = document.createElement('div');
+//     row.classList.add('row');
+//     row.setAttribute('id', 'row-attr-req-' + numAttrReqElements);
+//     row.style.backgroundColor = '#a2a2a259';
+//     row.style.borderRadius = '4px';
+//     row.style.borderBottom = '1px';
+//     row.style.borderBottomColor = 'black';
+//     row.style.marginBottom = '0.15rem';
+//
+//     let col1 = document.createElement('div');
+//     col1.setAttribute('class', 'col-md-9');
+//     col1.classList.add('py-3');
+//
+//     let col2 = document.createElement('div');
+//     col2.setAttribute('class', 'col-md-3');
+//     col2.classList.add('text-center', 'py-3');
+//
+//     let inputText = document.createElement('input');
+//     inputText.setAttribute('type', 'text');
+//     inputText.setAttribute('id', 'Name-Id-' + numAttrReqElements);
+//     inputText.setAttribute('name', 'Name-' + numAttrReqElements);
+//     inputText.setAttribute('placeholder', 'Element Name ...');
+//     inputText.style.width = '45%';
+//
+//     col1.appendChild(inputText);
+//
+//     let removeButton = document.createElement('button');
+//     removeButton.setAttribute('id', 'btnattrReq-' + numAttrReqElements);
+//     // removeButton.classList.add('btn', 'btn-default', 'btn-sm');
+//     removeButton.innerHTML='<span class="glyphicon glyphicon-remove"></span> Remove';
+//     removeButton.addEventListener('click', async (mouseEvent) => {
+//         let childId = mouseEvent.target.id.split("-")[1];
+//         attrReqParentDiv.removeChild(document.getElementById('row-attr-req-' + childId));
+//         attrDataTypeParentDiv.removeChild(document.getElementById('row-data-type-' + childId));
+//     });
+//     col2.appendChild(removeButton);
+//
+//     row.appendChild(col1);
+//     row.appendChild(col2);
+//
+//     return row;
+// }
 
 
 
@@ -900,13 +931,13 @@ btnAddQuery.addEventListener('click',async function(){
     queryParentDiv.appendChild(getQueryElement());
 });
 
-btnAddAttrReq.addEventListener('click',async function(){
-    numAttrReqElements++;
-    numDataTypes++;
-    console.log("btnAddAttrReq");
-    attrReqParentDiv.appendChild(getAttrReqElement());
-    attrDataTypeParentDiv.appendChild(getDataTypeElement());
-});
+// btnAddAttrReq.addEventListener('click',async function(){
+//     numAttrReqElements++;
+//     numDataTypes++;
+//     console.log("btnAddAttrReq");
+//     attrReqParentDiv.appendChild(getAttrReqElement());
+//     attrDataTypeParentDiv.appendChild(getDataTypeElement());
+// });
 
 
 btnSubmit.addEventListener('click', async function(event) {
@@ -923,13 +954,23 @@ btnSubmit.addEventListener('click', async function(event) {
         let length = attributeParentDiv.children.length;
 
         for(i = 0; i < length; i++) {
-            let name = attributeParentDiv.children[i].children[0].children[0].value;
-            let data = {};
-            // data['name'] = name;
-            // elementsArray.push(data);
+            let name = attributeParentDiv.children[i].children[1].children[0].value;
             elementsArray.push(name);
+
+           // let check = ;
+            if(attributeParentDiv.children[i].children[0].children[0].checked == true)
+            {
+             //   let reqAttr = attributeParentDiv.children[i].children[1].children[0].value;
+                let dataType = attributeParentDiv.children[i].children[2].children[0].value;
+                elementsReqArray.push(name);
+                dataTypeArray.push(dataType);
+            }
+
         }
 
+        console.log(elementsArray);
+        console.log(elementsReqArray);
+        console.log(dataTypeArray);
         length = queryParentDiv.children.length;
 
         for(i = 0; i < length; i++) {
@@ -938,25 +979,6 @@ btnSubmit.addEventListener('click', async function(event) {
             // data["query"] = query;
             // queries.push(data);
             queries.push(query);
-        }
-
-        length = attrReqParentDiv.children.length;
-
-        for(i = 0 ; i < length; i++) {
-            let attrReq = attrReqParentDiv.children[i].children[0].children[0].value;
-            let data = {};
-            // data['attrReq'] = attrReq;
-            elementsReqArray.push(attrReq);
-        }
-
-        length = attrDataTypeParentDiv.children.length;
-
-        for(i = 0 ; i < length; i++) {
-            let dataAttr = attrDataTypeParentDiv.children[i].children[0].children[0].value;
-            let data = {};
-            // data['dataType'] = dataAttr;
-            // dataTypeArray.push(data);
-            dataTypeArray.push(dataAttr);
         }
 
         let json_data = {};
@@ -972,6 +994,9 @@ btnSubmit.addEventListener('click', async function(event) {
         json_data['elementsReqArray'] = elementsReqArray;
         json_data['dataTypeArray'] = dataTypeArray;
 
+        console.log(json_data);
+
+        //=============Remove this
         json_data={
             "stream_name": "forex_akshil",
             "data_src": "forex-data.csv",
@@ -986,6 +1011,7 @@ btnSubmit.addEventListener('click', async function(event) {
             "dataTypeArray": ["VARCHAR(255)", "INT", "INT", "INT"],
         };
         console.log(json_data);
+        //====================
 
         axios
             .post('/newStreamDetails', {
